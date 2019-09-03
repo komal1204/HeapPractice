@@ -1,0 +1,168 @@
+//https://leetcode.com/problems/kth-largest-element-in-an-array/submissions/
+
+//This question has been solved by making a maxHeap, and then Heap Sort
+
+class MaxHeap{
+    ArrayList<Integer> a= new ArrayList<Integer>();
+    
+    public MaxHeap(){
+        a.add(null);
+    }
+    
+    public int getMax(){
+        if(a.size()<2){
+            return Integer.MIN_VALUE;
+        }
+        return a.get(1);
+    }
+    
+    public void insert(int data){
+        if(a.size()<2){
+            a.add(data);
+            return;
+        }
+        a.add(data);
+        int pos = a.size()-1;
+        int p = pos/2;
+        while(p>=1){
+            if(a.get(pos)>a.get(p)){
+                //swap
+                int temp = a.get(p);
+                a.set(p,a.get(pos));
+                a.set(pos,temp);
+                
+            }
+            pos = p;
+            p = pos/2;
+        }
+        return;
+    }
+    
+    public void delMax(){
+        if(a.size()<2){
+            return;
+        }
+        
+        int p =1;
+        //swap first and last element
+        
+        int last = a.get(a.size()-1);
+        a.set(p,last);
+        a.remove(a.size()-1);
+        
+        int index =0;
+        //heapify - percolate down
+        //heapigying after swapping
+        while(p<a.size()){
+            
+            if(2*p<a.size() && 2*p+1 < a.size()){
+                //swap if child is more than parent
+                if(a.get(p)<a.get(2*p) || a.get(p)<a.get(2*p+1)){
+                    if(a.get(2*p)>=a.get(2*p+1)){
+                        index = 2*p;
+                        int temp = a.get(p);
+                        a.set(p,a.get(2*p));
+                        a.set(2*p,temp);
+                    }
+                    else{
+                        index = 2*p +1;
+                        int temp = a.get(p);
+                        a.set(p,a.get(2*p+1));
+                        a.set(2*p+1,temp);
+                    }
+                }
+                p = index;
+            }
+            else{
+                //incase there is only one child
+                if(2*p<a.size()){
+                    if(a.get(p)<a.get(2*p)){
+                        int temp = a.get(p);
+                        a.set(p,a.get(2*p));
+                        a.set(2*p,temp);
+                        
+                    }
+                    index = 2*p;
+                }
+                p = index;
+            }
+        }
+    }
+}
+
+class Solution {
+    
+    public int findKthLargest(int[] nums, int k) {
+        MaxHeap maxHeap = new MaxHeap();
+        for(int i=0;i<nums.length;i++){
+            maxHeap.insert(nums[i]);
+        }
+        
+       
+        
+        //heapsort
+               
+        
+        int pos = maxHeap.a.size()-1;
+        
+        for(int i=1;i<=maxHeap.a.size()-1;i++){
+            
+            //swap first and last element
+            int max = maxHeap.getMax();
+            maxHeap.a.set(1,maxHeap.a.get(pos));
+            maxHeap.a.set(pos,max);
+            pos--;
+            // heapify 
+            int p =1;
+            int index =0;
+            while(p<pos){
+            
+            if(2*p<=pos && 2*p+1 <= pos){
+                //swap if child is more than parent
+                if(maxHeap.a.get(p)<maxHeap.a.get(2*p) || maxHeap.a.get(p)<maxHeap.a.get(2*p+1)){
+                    if(maxHeap.a.get(2*p)>=maxHeap.a.get(2*p+1)){
+                        index = 2*p;
+                        int temp = maxHeap.a.get(p);
+                        
+                        maxHeap.a.set(p,maxHeap.a.get(2*p));
+                        maxHeap.a.set(2*p,temp);
+                    }
+                    else{
+                        index = 2*p +1;
+                        int temp = maxHeap.a.get(p);
+                        
+                        maxHeap.a.set(p,maxHeap.a.get(2*p+1));
+                        maxHeap.a.set(2*p+1,temp);
+                    }
+                    p = index;
+                }
+               else break; 
+            }
+                
+            else{
+                //incase there is only one child
+                if(2*p<=pos){
+                    if(maxHeap.a.get(p)<maxHeap.a.get(2*p)){
+                        int temp = maxHeap.a.get(p);
+                         
+                        maxHeap.a.set(p,maxHeap.a.get(2*p));
+                        maxHeap.a.set(2*p,temp);
+                        index = 2*p;
+                        p = index;
+                    }
+                    else break;
+                }
+                else break;
+                
+                
+            }
+        }
+           
+         }
+        
+        int n = maxHeap.a.size()-1;
+        int req = n -k+1;
+        return maxHeap.a.get(req);
+        
+    }
+}
