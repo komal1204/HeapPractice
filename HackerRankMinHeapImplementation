@@ -1,0 +1,124 @@
+/* This code is the solution to https://www.hackerrank.com/challenges/qheap1/problem?isFullScreen=true
+Here instead of DeleteMin, delete arbirtrary element is implemented using recusrion */
+
+import java.io.*;
+import java.util.*;
+
+class MinHeap{
+    ArrayList<Integer> a = new ArrayList();
+
+    public MinHeap(){
+        a.add(null);
+    }
+
+    public void insert(int data){
+        if(a.size()<2){
+            a.add(data);
+            return;
+        }
+        else{
+            a.add(data);
+            int pos = a.size()-1;
+            int p = pos/2;
+            while(p>=1){
+                if(a.get(p)>a.get(pos)){
+                    //swap
+                    int temp = a.get(p);
+                    a.set(p,a.get(pos));
+                    a.set(pos,temp);
+                }
+                pos =p;
+                p = pos/2;
+            }
+        }
+        return;
+    }
+
+    public int getMin(){
+        if(a.size()>1)
+        return a.get(1);
+        else return a.get(0);
+    }
+
+    public void heapify(int pos){
+        if(2*pos<a.size() && 2*pos+1<a.size()){
+            if(a.get(pos)>a.get(2*pos) || a.get(pos)>a.get(2*pos+1)){
+                int min = Integer.MAX_VALUE;
+                if(a.get(2*pos)<a.get(2*pos+1)){
+                    min = a.get(2*pos);
+                    
+                    a.set(2*pos,a.get(pos));
+                    a.set(pos,min);
+                    pos = 2*pos;
+                    heapify(pos);
+                }
+                else{
+                    min = a.get(2*pos+1);
+                    a.set(2*pos+1,a.get(pos));
+                    a.set(pos,min);
+                    pos = 2*pos+1;
+                    heapify(pos);
+                }
+            }
+        }
+        else{
+            if(2*pos<a.size()){
+                int min = Integer.MAX_VALUE;
+                if(a.get(2*pos)<a.get(pos)){
+                    min = a.get(2*pos);
+                    
+                    a.set(2*pos,a.get(pos));
+                    a.set(pos,min);
+                    pos = 2*pos;
+                    heapify(pos);
+                }
+                
+            }
+            
+        }
+    }
+
+    public void delArbitrary(int v){
+
+        int pos = 0;
+        for(int i=1;i<a.size();i++){
+            if(a.get(i)==v)
+            pos =i;
+        }
+
+        //swap current element with last element
+        int temp = a.get(a.size()-1);
+        a.set(pos,temp);
+        a.remove(a.size()-1);
+
+        //heapify
+        //top-down
+        heapify(pos);
+        return;
+    }
+}
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        MinHeap m = new MinHeap();
+        while(t>0){
+            int type = sc.nextInt();
+            int data=Integer.MAX_VALUE;
+            if(type==1){
+                data = sc.nextInt();
+                m.insert(data);
+            }
+            if(type==2){
+                int v = sc.nextInt();
+                m.delArbitrary(v);
+            }
+            if(type==3){
+                System.out.println(m.getMin());
+            }
+            t--;
+        }
+    }
+}
+
